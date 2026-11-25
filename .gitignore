@@ -1,0 +1,13 @@
+/out/
+/dist/
+/.vs/
+**/__pycache__/
+*.pyc
+*.user
+*.suo
+*.pdb
+*.log
+.env
+.env.*
+*.pfx
+*.p12
