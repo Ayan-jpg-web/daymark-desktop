@@ -1,48 +1,18 @@
-name: Initial Daymark source import
-on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/source-integrity.yml']
-permissions: {}
+name: Check Daymark source
+on: workflow_dispatch
+permissions:
+  contents: read
 jobs:
-  import-approved-snapshot:
-    if: github.repository_id == '1471017040' && github.event.before == 'e0ceaecfdad0b5cd40a7ce97312216e8d62fadfd'
+  check:
+    name: Verify skins, offline defaults and sample package
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
+    timeout-minutes: 4
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
-      - name: Check and import the exact approved archive; never run its contents
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$GITHUB_SHA"
-          archive="$RUNNER_TEMP/daymark-source.zip"
-          curl --fail --silent --show-error --location --retry 2 --max-time 75 --proto '=https' --proto-redir '=https' 'https://backend.composio.dev/api/v3/sl/IKfr4UWB3k' -o "$archive"
-          python3 - "$archive" <<'PY'
-          import hashlib, pathlib, subprocess, sys, zipfile
-          raw = pathlib.Path(sys.argv[1]).read_bytes()
-          assert hashlib.sha256(raw).hexdigest() == 'd76582ce5c776f2f460edc5e5ffe73d41f450b2f4fa6b5d7f7172c464af8ec75'
-          manifest = []
-          index_entries = []
-          from io import BytesIO
-          with zipfile.ZipFile(BytesIO(raw)) as z:
-              files = [m for m in z.infolist() if not m.is_dir()]
-              assert len(files) == 935 and sum(m.file_size for m in files) == 12845660
-              for m in files:
-                  parts = pathlib.PurePosixPath(m.filename).parts
-                  assert len(parts) > 1 and parts[0] == 'daymark-desktop' and '.git' not in parts and '..' not in parts
-                  assert parts[1] in {'.gitignore', 'Build Windows.cmd', 'LICENSE', 'README.md', 'TESTING.md', 'app', 'examples', 'launcher', 'packaging', 'tools', 'upstream'}
-                  path = '/'.join(parts[1:]); data = z.read(m)
-                  mode = '100755' if (m.external_attr >> 16) & 0o111 else '100644'
-                  sha = subprocess.check_output(['git','hash-object','-w','--no-filters','--stdin'], input=data).decode('ascii').strip()
-                  manifest.append((path, mode, sha))
-                  index_entries.append((mode+' '+sha+'\t'+path+'\0').encode('utf-8'))
-          digest = hashlib.sha256(b''.join((mode+' '+sha+'\t'+p+'\n').encode('utf-8') for p,mode,sha in sorted(manifest))).hexdigest()
-          assert digest == '5e12159bf8c7c4a86adfc7a0a803ff89c67826384644cf5c17614b9c025c6652'
-          subprocess.run(['git','update-index','-z','--index-info'], input=b''.join(index_entries), check=True)
-          print('Verified and staged all 935 approved source files.')
-          PY
-          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit --quiet -m 'Publish Daymark Desktop 1.0 source, skins, Windows tooling and licenses'
-          git push origin HEAD:refs/heads/main
+      - name: Check out this revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Run the local-only source checks
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 tools/verify.py
