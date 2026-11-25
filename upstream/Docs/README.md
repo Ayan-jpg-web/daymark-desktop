@@ -1,0 +1,1 @@
+This directory contains documentation about the Rainmeter source code and is meant only for C/C++ developers. To find documentation about the actual Rainmeter application, visit [docs.rainmeter.net](http://docs.rainmeter.net).

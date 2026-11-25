@@ -1,0 +1,17 @@
+#include <windows.h>
+#include "resource.h"
+ID_ICON ICON "Daymark.ico"
+ID_LOCATION DIALOGEX 0, 0, 270, 166
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Daymark - Connect a location"
+FONT 9, "Segoe UI"
+BEGIN
+ LTEXT "Use coordinates for a nearby city, not your home address.", -1, 12, 10, 247, 22
+ LTEXT "Latitude (-90 to 90)", -1, 12, 42, 112, 12
+ EDITTEXT ID_LAT, 145, 39, 111, 15, ES_AUTOHSCROLL | WS_TABSTOP
+ LTEXT "Longitude (-180 to 180)", -1, 12, 62, 126, 12
+ EDITTEXT ID_LON, 145, 60, 111, 15, ES_AUTOHSCROLL | WS_TABSTOP
+ LTEXT "Use a decimal point, e.g. 48.86 and 2.35. Connect sends the rounded coordinates to Open-Meteo, which also sees your IP. It refreshes about every 30 minutes while live. Disconnect on the widget to stop.", -1, 12, 85, 246, 47
+ DEFPUSHBUTTON "Connect weather", IDOK, 83, 142, 95, 16
+ PUSHBUTTON "Cancel", IDCANCEL, 185, 142, 70, 16
+END

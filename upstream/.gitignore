@@ -1,0 +1,15 @@
+*.exe
+*.patch
+*.txt
+*.user
+*.aps
+/.vs
+/ipch
+bin
+obj
+
+/Installer/Languages.nsh
+/Version.cs
+/Version.h
+x32*
+x64*

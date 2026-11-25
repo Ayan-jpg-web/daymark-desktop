@@ -1,0 +1,7 @@
+Daymark Desktop 1.0 is an independent distribution built on Rainmeter, not an official Rainmeter release.
+Rainmeter engine: Rainmeter Team and upstream contributors. GNU GPL v2; consult individual component notices.
+Stable release v4.5.28.3936; source commit cbd528813fa72fd48fb946c0e994367ed1aca415.
+https://github.com/rainmeter/rainmeter/tree/cbd528813fa72fd48fb946c0e994367ed1aca415
+Official installer SHA-256: de6e010f8c28882bc28dcd8f319c899f34dfddec51e1e4dd4e7a23f68ebfe14d
+The bundled x64 engine and upstream plugins are taken from that official installer; the Daymark launcher, widgets, local gallery, installer and documentation are independent additions under GPL-2.0-or-later. See LICENSE.txt and Licenses/. Corresponding source, including build scripts, is distributed as the companion source ZIP.
+Optional weather: Open-Meteo (https://open-meteo.com/), data CC BY 4.0. Review provider terms for commercial deployment. No affiliation or endorsement implied.
